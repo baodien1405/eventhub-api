@@ -15,3 +15,7 @@ export interface SignUp {
   email: string
   password: string
 }
+
+export interface Verification {
+  email: string
+}

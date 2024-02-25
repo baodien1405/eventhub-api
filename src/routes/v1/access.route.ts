@@ -8,7 +8,7 @@ import { loginSchema, signUpSchema } from '@/validations'
 const router = express.Router()
 
 router.post('/sign-up', validator(signUpSchema), asyncHandler(AccessController.signUp))
-
 router.post('/login', validator(loginSchema), asyncHandler(AccessController.login))
+router.post('/verification', asyncHandler(AccessController.verification))
 
 export const AccessRoute = router

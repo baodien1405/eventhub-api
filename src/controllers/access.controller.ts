@@ -16,7 +16,15 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
   }).send(res)
 }
 
+const verification = async (req: Request, res: Response, next: NextFunction) => {
+  new OK({
+    message: 'Email sent successfully!',
+    metadata: await AccessService.verification(req.body)
+  }).send(res)
+}
+
 export const AccessController = {
   signUp,
-  login
+  login,
+  verification
 }

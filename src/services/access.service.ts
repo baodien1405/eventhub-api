@@ -1,9 +1,12 @@
 import bcrypt from 'bcrypt'
+import nodemailer from 'nodemailer'
+import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 
-import { AuthFailureError, BadRequestError, ConflictRequestError } from '@/core'
+import { AuthFailureError, BadRequestError, ConflictRequestError, ErrorResponse } from '@/core'
 import { UserModel } from '@/models'
-import { Login, SignUp } from '@/types'
+import { Login, SignUp, Verification } from '@/types'
 import { getInfoData, generateTokenPair } from '@/utils'
+import { env } from '@/config'
 
 const signUp = async ({ fullName, email, password }: SignUp) => {
   const existUser = await UserModel.findOne({ email: email }).lean()
@@ -61,7 +64,47 @@ const login = async ({ email, password }: Login) => {
   }
 }
 
+const handleSendMail = async (email: string, verifyCode: number) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      auth: {
+        user: env.SMTP_GMAIL_USERNAME,
+        pass: env.SMTP_GMAIL_PASSWORD
+      }
+    })
+
+    const mailOptions = {
+      from: `"Support EventHub Application ${env.SMTP_GMAIL_USERNAME}`,
+      to: email,
+      subject: 'Verification email code',
+      text: 'Your code to verification email',
+      html: `<b>${verifyCode}</b>`
+    }
+
+    await transporter.sendMail(mailOptions)
+
+    return {
+      code: verifyCode
+    }
+  } catch (error) {
+    throw new ErrorResponse(
+      'Cannot send verification code to email!',
+      ReasonPhrases.UNAUTHORIZED,
+      StatusCodes.UNAUTHORIZED
+    )
+  }
+}
+
+const verification = async ({ email }: Verification) => {
+  const verifyCode = Math.round(1000 + Math.random() * 9000)
+
+  return await handleSendMail(email, verifyCode)
+}
+
 export const AccessService = {
   signUp,
-  login
+  login,
+  verification
 }
