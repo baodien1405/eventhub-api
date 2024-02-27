@@ -45,7 +45,7 @@ const login = async ({ email, password }: Login) => {
 
   if (!foundUser) throw new ConflictRequestError('User not registered!')
 
-  const hasMatchPassword = bcrypt.compare(password, foundUser.password)
+  const hasMatchPassword = await bcrypt.compare(password, foundUser.password)
 
   if (!hasMatchPassword) throw new AuthFailureError('Authentication error!')
 
@@ -98,6 +98,10 @@ const handleSendMail = async (email: string, verifyCode: number) => {
 }
 
 const verification = async ({ email }: Verification) => {
+  const existUser = await UserModel.findOne({ email: email }).lean()
+
+  if (existUser) throw new ConflictRequestError('User already registered!')
+
   const verifyCode = Math.round(1000 + Math.random() * 9000)
 
   return await handleSendMail(email, verifyCode)
