@@ -19,3 +19,7 @@ export interface SignUp {
 export interface Verification {
   email: string
 }
+
+export interface ForgotPassword {
+  email: string
+}

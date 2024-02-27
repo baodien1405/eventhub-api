@@ -23,8 +23,16 @@ const verification = async (req: Request, res: Response, next: NextFunction) => 
   }).send(res)
 }
 
+const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
+  new OK({
+    message: 'Successfully!',
+    metadata: await AccessService.forgotPassword(req.body)
+  }).send(res)
+}
+
 export const AccessController = {
   signUp,
   login,
-  verification
+  verification,
+  forgotPassword
 }

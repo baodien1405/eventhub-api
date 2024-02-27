@@ -4,9 +4,10 @@ import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 
 import { AuthFailureError, BadRequestError, ConflictRequestError, ErrorResponse } from '@/core'
 import { UserModel } from '@/models'
-import { Login, SignUp, Verification } from '@/types'
+import { ForgotPassword, Login, SignUp, Verification } from '@/types'
 import { getInfoData, generateTokenPair } from '@/utils'
 import { env } from '@/config'
+import Mail from 'nodemailer/lib/mailer'
 
 const signUp = async ({ fullName, email, password }: SignUp) => {
   const existUser = await UserModel.findOne({ email: email }).lean()
@@ -64,7 +65,7 @@ const login = async ({ email, password }: Login) => {
   }
 }
 
-const handleSendMail = async (email: string, verifyCode: number) => {
+const handleSendMail = async (mailOptions: Mail.Options) => {
   try {
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
@@ -75,6 +76,20 @@ const handleSendMail = async (email: string, verifyCode: number) => {
       }
     })
 
+    return await transporter.sendMail(mailOptions)
+  } catch (error) {
+    throw new ErrorResponse(
+      'Cannot send verification code to email!',
+      ReasonPhrases.UNAUTHORIZED,
+      StatusCodes.UNAUTHORIZED
+    )
+  }
+}
+
+const verification = async ({ email }: Verification) => {
+  try {
+    const verifyCode = Math.round(1000 + Math.random() * 9000)
+
     const mailOptions = {
       from: `"Support EventHub Application ${env.SMTP_GMAIL_USERNAME}`,
       to: email,
@@ -83,7 +98,7 @@ const handleSendMail = async (email: string, verifyCode: number) => {
       html: `<b>${verifyCode}</b>`
     }
 
-    await transporter.sendMail(mailOptions)
+    await handleSendMail(mailOptions)
 
     return {
       code: verifyCode
@@ -97,18 +112,36 @@ const handleSendMail = async (email: string, verifyCode: number) => {
   }
 }
 
-const verification = async ({ email }: Verification) => {
-  const existUser = await UserModel.findOne({ email: email }).lean()
+const forgotPassword = async ({ email }: ForgotPassword) => {
+  const newPassword = Math.round(100000 + Math.random() * 99000)
 
-  if (existUser) throw new ConflictRequestError('User already registered!')
+  const foundUser = await UserModel.findOne({ email: email }).lean()
 
-  const verifyCode = Math.round(1000 + Math.random() * 9000)
+  if (!foundUser) throw new ConflictRequestError('User not registered!')
 
-  return await handleSendMail(email, verifyCode)
+  const passwordHash = await bcrypt.hash(String(newPassword), 10)
+
+  await UserModel.findByIdAndUpdate(foundUser._id, {
+    password: passwordHash,
+    isChangePassword: true
+  })
+
+  const mailOptions = {
+    from: `"Support EventHub Application ${env.SMTP_GMAIL_USERNAME}`,
+    to: email,
+    subject: 'New password',
+    text: 'Your password to verification email',
+    html: `<b>${newPassword}</b>`
+  }
+
+  await handleSendMail(mailOptions)
+
+  return {}
 }
 
 export const AccessService = {
   signUp,
   login,
-  verification
+  verification,
+  forgotPassword
 }
