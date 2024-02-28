@@ -30,9 +30,17 @@ const forgotPassword = async (req: Request, res: Response, next: NextFunction) =
   }).send(res)
 }
 
+const googleSignIn = async (req: Request, res: Response, next: NextFunction) => {
+  new OK({
+    message: 'Successfully!',
+    metadata: await AccessService.googleSignIn(req.body)
+  }).send(res)
+}
+
 export const AccessController = {
   signUp,
   login,
   verification,
-  forgotPassword
+  forgotPassword,
+  googleSignIn
 }

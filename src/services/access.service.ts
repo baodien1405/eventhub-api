@@ -4,7 +4,7 @@ import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 
 import { AuthFailureError, BadRequestError, ConflictRequestError, ErrorResponse } from '@/core'
 import { UserModel } from '@/models'
-import { ForgotPassword, Login, SignUp, Verification } from '@/types'
+import { ForgotPassword, GoogleSignIn, Login, SignUp, Verification } from '@/types'
 import { getInfoData, generateTokenPair } from '@/utils'
 import { env } from '@/config'
 import Mail from 'nodemailer/lib/mailer'
@@ -139,9 +139,58 @@ const forgotPassword = async ({ email }: ForgotPassword) => {
   return {}
 }
 
+const googleSignIn = async ({ email, fullName, avatar }: GoogleSignIn) => {
+  const foundUser = await UserModel.findOne({ email: email }).lean()
+
+  if (foundUser) {
+    await UserModel.findByIdAndUpdate(foundUser._id, {
+      fullName,
+      avatar
+    })
+
+    const { accessToken, refreshToken } = await generateTokenPair({
+      userId: foundUser._id,
+      email: foundUser.email
+    })
+
+    return {
+      user: getInfoData({
+        fields: ['_id', 'email', 'fullName', 'avatar'],
+        object: foundUser
+      }),
+      accessToken,
+      refreshToken
+    }
+  } else {
+    const newUser = await UserModel.create({
+      fullName,
+      email
+    })
+
+    if (newUser) {
+      const { accessToken, refreshToken } = await generateTokenPair({
+        userId: newUser._id,
+        email: newUser.email
+      })
+
+      return {
+        user: getInfoData({
+          fields: ['_id', 'email', 'fullName', 'avatar'],
+          object: newUser
+        }),
+        accessToken,
+        refreshToken
+      }
+    }
+
+    throw new BadRequestError('Error with sign in Google!')
+  }
+}
+
 export const AccessService = {
   signUp,
   login,
   verification,
-  forgotPassword
+  forgotPassword,
+  googleSignIn
 }

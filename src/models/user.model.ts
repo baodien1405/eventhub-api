@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema(
   {
     fullName: { type: String, trim: true, maxLength: 150 },
     email: { type: String, required: true, unique: true, trim: true },
-    password: { type: String, required: true },
+    password: { type: String },
     avatar: { type: String }
   },
   {

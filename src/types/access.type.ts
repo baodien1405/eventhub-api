@@ -23,3 +23,9 @@ export interface Verification {
 export interface ForgotPassword {
   email: string
 }
+
+export interface GoogleSignIn {
+  email: string
+  fullName?: string
+  avatar?: string
+}
