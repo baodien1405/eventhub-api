@@ -29,3 +29,9 @@ export interface GoogleSignIn {
   fullName?: string
   avatar?: string
 }
+
+export interface FacebookSignIn {
+  email: string
+  fullName?: string
+  avatar?: string
+}
