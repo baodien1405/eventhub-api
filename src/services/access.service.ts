@@ -1,13 +1,13 @@
 import bcrypt from 'bcrypt'
 import nodemailer from 'nodemailer'
 import { ReasonPhrases, StatusCodes } from 'http-status-codes'
+import Mail from 'nodemailer/lib/mailer'
 
 import { AuthFailureError, BadRequestError, ConflictRequestError, ErrorResponse } from '@/core'
 import { UserModel } from '@/models'
 import { ForgotPassword, GoogleSignIn, Login, SignUp, Verification } from '@/types'
 import { getInfoData, generateTokenPair } from '@/utils'
 import { env } from '@/config'
-import Mail from 'nodemailer/lib/mailer'
 
 const signUp = async ({ fullName, email, password }: SignUp) => {
   const existUser = await UserModel.findOne({ email: email }).lean()
