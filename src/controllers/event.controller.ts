@@ -13,14 +13,21 @@ const createEvent = async (req: Request, res: Response, next: NextFunction) => {
 
 const getEventDetails = async (req: Request, res: Response, next: NextFunction) => {
   const eventId = new mongoose.Types.ObjectId(req.params.id)
-
   new OK({
     message: 'Successfully!',
     metadata: await EventService.getEventDetails(eventId)
   }).send(res)
 }
 
+const getEventList = async (req: Request, res: Response, next: NextFunction) => {
+  new OK({
+    message: 'Successfully!',
+    metadata: await EventService.getEventList(req.params)
+  }).send(res)
+}
+
 export const EventController = {
   createEvent,
-  getEventDetails
+  getEventDetails,
+  getEventList
 }

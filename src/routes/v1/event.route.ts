@@ -9,6 +9,7 @@ const router = express.Router()
 
 router.use(authMiddleware.authentication)
 router.post('/', validator(createEventSchema), asyncHandler(EventController.createEvent))
+router.get('/', asyncHandler(EventController.getEventList))
 router.get(
   '/:id',
   validator(getEventDetailsSchema, ValidationSource.PARAM),

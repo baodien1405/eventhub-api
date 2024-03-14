@@ -10,3 +10,13 @@ export interface Event {
   event_price: string
   event_author_id: string
 }
+
+export interface QueryEventParams {
+  limit: number
+  page: number
+  search: string
+  category: string
+  order: string
+  sort_by: string
+  select: string[]
+}
