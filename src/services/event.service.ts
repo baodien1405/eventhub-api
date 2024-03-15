@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 import { Event } from '@/types'
-import { EventModel } from '@/models'
+import { EVENT_INVALID_UPDATE_FIELDS, EventModel } from '@/models'
 import { getUnSelectData } from '@/utils'
 import { BadRequestError, NotFoundError } from '@/core'
 import { EventRepository } from '@/models/repositories'
@@ -55,8 +55,32 @@ const getEventList = async ({
   })
 }
 
+const updateEvent = async (eventId: mongoose.Types.ObjectId, payload: Partial<Event>) => {
+  const updateData = {
+    ...payload,
+    updatedAt: Date.now()
+  }
+
+  Object.keys(updateData).forEach((fieldName) => {
+    if (EVENT_INVALID_UPDATE_FIELDS.includes(fieldName)) {
+      delete payload[fieldName as keyof Event]
+    }
+  })
+
+  const updateEvent = await EventModel.findByIdAndUpdate(eventId, payload, {
+    new: true
+  })
+    .select(getUnSelectData(['__v', 'createdAt', 'updatedAt']))
+    .lean()
+
+  if (!updateEvent) throw new BadRequestError('Failed to update event!')
+
+  return updateEvent
+}
+
 export const EventService = {
   createEvent,
   getEventDetails,
-  getEventList
+  getEventList,
+  updateEvent
 }

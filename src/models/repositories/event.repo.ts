@@ -40,7 +40,7 @@ const getEventList = async ({ limit, page, search, category, sort_by, order, sel
   const [totalEvent, events] = await Promise.all([totalEventPromise, eventsPromise])
 
   return {
-    items: events,
+    results: events,
     pagination: {
       page: page,
       limit: limit,

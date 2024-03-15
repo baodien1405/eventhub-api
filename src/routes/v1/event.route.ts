@@ -3,7 +3,7 @@ import express from 'express'
 import { EventController } from '@/controllers'
 import { asyncHandler } from '@/helpers'
 import { ValidationSource, authMiddleware, validator } from '@/middlewares'
-import { createEventSchema, getEventDetailsSchema } from '@/validations'
+import { createEventSchema, getEventDetailsSchema, updateEventSchema } from '@/validations'
 
 const router = express.Router()
 
@@ -14,6 +14,11 @@ router.get(
   '/:id',
   validator(getEventDetailsSchema, ValidationSource.PARAM),
   asyncHandler(EventController.getEventDetails)
+)
+router.patch(
+  '/:id',
+  validator(updateEventSchema, ValidationSource.BODY, { allowUnknown: true }),
+  asyncHandler(EventController.updateEvent)
 )
 
 export const EventRoute = router

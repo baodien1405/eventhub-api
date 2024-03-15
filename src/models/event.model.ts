@@ -35,4 +35,6 @@ const eventSchema = new mongoose.Schema(
   }
 )
 
+export const EVENT_INVALID_UPDATE_FIELDS = ['_id', 'event_author_id', 'createdAt']
+
 export const EventModel = mongoose.model<Event>(EVENT_DOCUMENT_NAME, eventSchema)
