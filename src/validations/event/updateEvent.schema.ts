@@ -13,6 +13,5 @@ export const updateEventSchema = Joi.object<Event>({
   event_start_at: Joi.date(),
   event_end_at: Joi.date(),
   event_date: Joi.date(),
-  event_price: Joi.number(),
-  event_author_id: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
+  event_price: Joi.number()
 })

@@ -4,7 +4,7 @@ import { Event } from '@/types'
 import { EVENT_INVALID_UPDATE_FIELDS, EventModel } from '@/models'
 import { getUnSelectData } from '@/utils'
 import { BadRequestError, NotFoundError } from '@/core'
-import { EventRepository } from '@/models/repositories'
+import { EventRepository } from '@/repositories'
 
 const createEvent = async (payload: Event) => {
   const newEvent = await EventModel.create(payload)
@@ -14,10 +14,14 @@ const createEvent = async (payload: Event) => {
   return newEvent
 }
 
-const getEventDetails = async (eventId: mongoose.Types.ObjectId) => {
-  const event = await EventModel.findById(eventId)
-    .select(getUnSelectData(['createdAt', 'updatedAt', '__v']))
-    .lean()
+const getEventDetails = async ({
+  eventId,
+  unSelect = ['createdAt', 'updatedAt', '__v']
+}: {
+  eventId: mongoose.Types.ObjectId
+  unSelect?: string[]
+}) => {
+  const event = await EventRepository.getEventDetails({ eventId, unSelect })
 
   if (!event) throw new NotFoundError('Event not found!')
 
@@ -41,7 +45,7 @@ const getEventList = async ({
     'event_thumbnail_url',
     'event_category',
     'event_price',
-    'event_author_id'
+    'event_author'
   ]
 }) => {
   return await EventRepository.getEventList({

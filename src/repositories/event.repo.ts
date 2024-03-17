@@ -1,7 +1,9 @@
+import mongoose from 'mongoose'
+
 import { ORDER, SORT_BY } from '@/constants'
 import { EventModel } from '@/models'
 import { QueryEventParams } from '@/types'
-import { getSelectData } from '@/utils'
+import { getSelectData, getUnSelectData } from '@/utils'
 
 const getEventList = async ({ limit, page, search, category, sort_by, order, select }: QueryEventParams) => {
   page = Number(page)
@@ -31,6 +33,7 @@ const getEventList = async ({ limit, page, search, category, sort_by, order, sel
 
   const totalEventPromise = EventModel.countDocuments()
   const eventsPromise = EventModel.find(condition)
+    .populate('event_author', 'fullName avatar email -_id')
     .sort({ [sort_by]: order === 'desc' ? -1 : 1 })
     .skip(skip)
     .limit(limit)
@@ -49,6 +52,14 @@ const getEventList = async ({ limit, page, search, category, sort_by, order, sel
   }
 }
 
+const getEventDetails = async ({ eventId, unSelect }: { eventId: mongoose.Types.ObjectId; unSelect: string[] }) => {
+  return await EventModel.findById(eventId)
+    .populate('event_author', 'fullName avatar email -_id')
+    .select(getUnSelectData(unSelect))
+    .lean()
+}
+
 export const EventRepository = {
-  getEventList
+  getEventList,
+  getEventDetails
 }

@@ -13,7 +13,7 @@ interface Event extends Document {
   event_thumbnail_url: string
   event_category: string
   event_price: string
-  event_author_id: mongoose.Types.ObjectId
+  event_author: mongoose.Types.ObjectId
 }
 
 const eventSchema = new mongoose.Schema(
@@ -24,7 +24,7 @@ const eventSchema = new mongoose.Schema(
     event_end_at: { type: Date },
     event_date: { type: Date },
     event_invite_users: { type: Array, default: [] },
-    event_author_id: { type: mongoose.Schema.ObjectId, required: true },
+    event_author: { type: mongoose.Schema.ObjectId, required: true, ref: 'User' },
     event_thumbnail_url: { type: String },
     event_category: { type: String, required: true },
     event_price: { type: Number, required: true }
@@ -35,6 +35,6 @@ const eventSchema = new mongoose.Schema(
   }
 )
 
-export const EVENT_INVALID_UPDATE_FIELDS = ['_id', 'event_author_id', 'createdAt']
+export const EVENT_INVALID_UPDATE_FIELDS = ['_id', 'event_author', 'createdAt']
 
 export const EventModel = mongoose.model<Event>(EVENT_DOCUMENT_NAME, eventSchema)

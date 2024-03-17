@@ -9,7 +9,6 @@ export const createEventSchema = Joi.object<Event>({
   event_start_at: Joi.date(),
   event_end_at: Joi.date(),
   event_date: Joi.date(),
-  event_author_id: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE).required(),
   event_invite_users: Joi.array()
     .required()
     .items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))

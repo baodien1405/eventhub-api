@@ -8,7 +8,7 @@ export interface Event {
   event_thumbnail_url: string
   event_category: string
   event_price: string
-  event_author_id: string
+  event_author: string
 }
 
 export interface QueryEventParams {

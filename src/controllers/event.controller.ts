@@ -7,7 +7,7 @@ import { EventService } from '@/services'
 const createEvent = async (req: Request, res: Response, next: NextFunction) => {
   new CREATED({
     message: 'Successfully!',
-    metadata: await EventService.createEvent(req.body)
+    metadata: await EventService.createEvent({ ...req.body, event_author: req.user.userId })
   }).send(res)
 }
 
@@ -15,7 +15,7 @@ const getEventDetails = async (req: Request, res: Response, next: NextFunction) 
   const eventId = new mongoose.Types.ObjectId(req.params.id)
   new OK({
     message: 'Successfully!',
-    metadata: await EventService.getEventDetails(eventId)
+    metadata: await EventService.getEventDetails({ eventId })
   }).send(res)
 }
 
