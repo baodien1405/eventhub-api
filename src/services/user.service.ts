@@ -1,16 +1,15 @@
-import { BadRequestError } from '@/core'
-import { UserModel } from '@/models'
-import { UserRepository } from '@/repositories'
-import { getSelectData } from '@/utils'
 import mongoose from 'mongoose'
 
-const getUserList = async ({ select = ['_id', 'fullName', 'email', 'avatar'] }) => {
-  const foundUser = await UserModel.find().select(getSelectData(select)).lean()
+import { BadRequestError } from '@/core'
+import { UserRepository } from '@/repositories'
 
-  if (!foundUser) throw new BadRequestError('Not found!')
+const getUserList = async ({ select = ['_id', 'fullName', 'email', 'avatar'] }) => {
+  const userList = await UserRepository.getUserList({ select })
+
+  if (!userList) throw new BadRequestError('Not found!')
 
   return {
-    items: foundUser
+    items: userList
   }
 }
 
