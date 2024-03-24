@@ -15,5 +15,11 @@ export const createEventSchema = Joi.object<Event>({
     .default([]),
   event_thumbnail_url: Joi.string(),
   event_category: Joi.string().required(),
-  event_price: Joi.number()
+  event_price: Joi.number(),
+  event_location_name: Joi.string().trim().required(),
+  event_address: Joi.string().trim().required(),
+  event_position: Joi.object({
+    lat: Joi.number(),
+    lng: Joi.number()
+  })
 })

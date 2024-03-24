@@ -14,6 +14,12 @@ interface Event extends Document {
   event_category: string
   event_price: string
   event_author: mongoose.Types.ObjectId
+  event_location_name: string
+  event_address: string
+  event_position: {
+    lat: number
+    lng: number
+  }
 }
 
 const eventSchema = new mongoose.Schema(
@@ -27,7 +33,15 @@ const eventSchema = new mongoose.Schema(
     event_author: { type: mongoose.Schema.ObjectId, required: true, ref: 'User' },
     event_thumbnail_url: { type: String },
     event_category: { type: String, required: true },
-    event_price: { type: Number, required: true }
+    event_price: { type: Number, required: true },
+    event_location_name: { type: String, required: true, trim: true, maxLength: 150 },
+    event_address: { type: String, required: true, trim: true, maxLength: 150 },
+    event_position: {
+      type: {
+        lat: { type: Number },
+        lng: { type: Number }
+      }
+    }
   },
   {
     timestamps: true,

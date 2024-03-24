@@ -13,5 +13,11 @@ export const updateEventSchema = Joi.object<Event>({
   event_start_at: Joi.date(),
   event_end_at: Joi.date(),
   event_date: Joi.date(),
-  event_price: Joi.number()
+  event_price: Joi.number(),
+  event_location_name: Joi.string().trim().required(),
+  event_address: Joi.string().trim().required(),
+  event_position: Joi.object({
+    lat: Joi.number(),
+    lng: Joi.number()
+  })
 })

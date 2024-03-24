@@ -9,6 +9,12 @@ export interface Event {
   event_category: string
   event_price: string
   event_author: string
+  event_location_name: string
+  event_address: string
+  event_position: {
+    lat: number
+    lng: number
+  }
 }
 
 export interface QueryEventParams {
