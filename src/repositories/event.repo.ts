@@ -3,9 +3,20 @@ import mongoose from 'mongoose'
 import { ORDER, SORT_BY } from '@/constants'
 import { EventModel } from '@/models'
 import { QueryEventParams } from '@/types'
-import { getSelectData, getUnSelectData } from '@/utils'
+import { calcDistanceLocation, getSelectData, getUnSelectData } from '@/utils'
 
-const getEventList = async ({ limit, page, search, category, sort_by, order, select }: QueryEventParams) => {
+const getEventList = async ({
+  limit,
+  page,
+  search,
+  category,
+  lat,
+  lng,
+  distance,
+  sort_by,
+  order,
+  select
+}: QueryEventParams) => {
   page = Number(page)
   limit = Number(limit)
   const skip = (page - 1) * limit
@@ -41,9 +52,23 @@ const getEventList = async ({ limit, page, search, category, sort_by, order, sel
     .lean()
 
   const [totalEvent, events] = await Promise.all([totalEventPromise, eventsPromise])
+  let filteredEvents = events
+
+  if (lat && lng && distance) {
+    filteredEvents = events.filter((event) => {
+      const eventDistance = calcDistanceLocation({
+        currentLat: Number(lat),
+        currentLng: Number(lng),
+        addressLat: event.event_position.lat,
+        addressLng: event.event_position.lng
+      })
+
+      return eventDistance < Number(distance)
+    })
+  }
 
   return {
-    results: events,
+    results: filteredEvents,
     pagination: {
       page: page,
       limit: limit,

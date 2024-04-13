@@ -33,6 +33,9 @@ const getEventList = async ({
   limit = 30,
   search = '',
   category = '',
+  lat = null,
+  lng = null,
+  distance = null,
   sort_by = '',
   order = '',
   select = [
@@ -45,7 +48,10 @@ const getEventList = async ({
     'event_thumbnail_url',
     'event_category',
     'event_price',
-    'event_author'
+    'event_author',
+    'event_location_name',
+    'event_address',
+    'event_position'
   ]
 }) => {
   return await EventRepository.getEventList({
@@ -53,6 +59,9 @@ const getEventList = async ({
     page,
     search,
     category,
+    lat,
+    lng,
+    distance,
     sort_by,
     order,
     select

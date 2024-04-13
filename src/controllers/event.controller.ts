@@ -22,7 +22,7 @@ const getEventDetails = async (req: Request, res: Response, next: NextFunction) 
 const getEventList = async (req: Request, res: Response, next: NextFunction) => {
   new OK({
     message: 'Successfully!',
-    metadata: await EventService.getEventList(req.params)
+    metadata: await EventService.getEventList(req.query)
   }).send(res)
 }
 

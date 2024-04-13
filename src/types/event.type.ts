@@ -22,6 +22,9 @@ export interface QueryEventParams {
   page: number
   search: string
   category: string
+  lat: number | null
+  lng: number | null
+  distance: number | null
   order: string
   sort_by: string
   select: string[]
