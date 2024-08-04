@@ -13,6 +13,7 @@ const getEventList = async ({
   lat,
   lng,
   distance,
+  date,
   sort_by,
   order,
   select
@@ -53,6 +54,10 @@ const getEventList = async ({
 
   const [totalEvent, events] = await Promise.all([totalEventPromise, eventsPromise])
   let filteredEvents = events
+
+  if (date) {
+    filteredEvents = events.filter((event) => event.event_date > new Date(date))
+  }
 
   if (lat && lng && distance) {
     filteredEvents = events.filter((event) => {

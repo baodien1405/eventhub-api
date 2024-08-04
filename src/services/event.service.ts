@@ -36,6 +36,7 @@ const getEventList = async ({
   lat = null,
   lng = null,
   distance = null,
+  date = null,
   sort_by = '',
   order = '',
   select = [
@@ -62,6 +63,7 @@ const getEventList = async ({
     lat,
     lng,
     distance,
+    date,
     sort_by,
     order,
     select

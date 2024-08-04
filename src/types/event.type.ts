@@ -25,6 +25,7 @@ export interface QueryEventParams {
   lat: number | null
   lng: number | null
   distance: number | null
+  date: string | null
   order: string
   sort_by: string
   select: string[]
