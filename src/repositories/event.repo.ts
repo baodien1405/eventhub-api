@@ -43,6 +43,13 @@ const getEventList = async ({
     }
   }
 
+  if (date) {
+    const compareDate = new Date(date)
+    condition.event_date = {
+      $gte: compareDate
+    }
+  }
+
   const totalEventPromise = EventModel.countDocuments()
   const eventsPromise = EventModel.find(condition)
     .populate('event_author', 'fullName avatar email -_id')
@@ -53,11 +60,8 @@ const getEventList = async ({
     .lean()
 
   const [totalEvent, events] = await Promise.all([totalEventPromise, eventsPromise])
-  let filteredEvents = events
 
-  if (date) {
-    filteredEvents = events.filter((event) => event.event_date > new Date(date))
-  }
+  let filteredEvents = events
 
   if (lat && lng && distance) {
     filteredEvents = events.filter((event) => {
