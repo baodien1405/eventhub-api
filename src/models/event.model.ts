@@ -41,7 +41,8 @@ const eventSchema = new mongoose.Schema(
         lat: { type: Number },
         lng: { type: Number }
       }
-    }
+    },
+    event_followers: { type: Array, default: [] }
   },
   {
     timestamps: true,

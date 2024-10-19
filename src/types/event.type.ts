@@ -15,6 +15,7 @@ export interface Event {
     lat: number
     lng: number
   }
+  event_followers: string[]
 }
 
 export interface QueryEventParams {
